@@ -1,8 +1,8 @@
-import { post } from "./post";
+import { Post } from "./post";
 
 export interface httpResponse {
 	status: boolean;
 	message?: string;
-	data?: Object | post[]
+	data?: Object | Post[]
 	error?: Error
 }

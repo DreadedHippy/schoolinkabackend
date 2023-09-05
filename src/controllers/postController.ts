@@ -1,102 +1,79 @@
 import { Request, Response } from "express";
-import pool from "../utils/database";
+import pool, { createPostInDB, deletePostFromDB, editPostInDB, getAllPostsFromDB, getSpecificPostFromDB } from "../utils/database";
 import { ErrorHandler } from "../utils/errorHandler";
+import { Post } from "../interface/post";
+
+let errorHandler = new ErrorHandler();
 
 export async function getAllPosts(req: Request, res: Response) {
-	pool.query('SELECT * FROM posts ORDER BY id ASC', (error, results) => {
-    if (error) {
-
-      new ErrorHandler().internalServerError(res, {
-        status: false,
-        error: error
+  getAllPostsFromDB()
+    .then((result) => {
+      res.status(200).json({
+        status: true,
+        data: result.rows
       })
-      return
-    }
-    res.status(200).json({
-      status: true,
-      data: results.rows
     })
-  })
+    .catch((error) => {
+      errorHandler.genericInternalServerError(res)
+    })
 }
 
 export async function getSpecificPost(req: Request, res: Response) {
   const id = parseInt(req.params.id);
-	pool.query('SELECT * FROM posts where id = $1',[id], (error, results) => {
-    if (error) {
-      
-      new ErrorHandler().internalServerError(res, {
-        status: false,
-        error: error
+  getSpecificPostFromDB(id)
+    .then((result) => {
+      res.status(200).json({
+        status: true,
+        data: result.rows
       })
-      return
-    }
-    res.status(200).json({
-      status: true,
-      data: results.rows[0]
     })
-  })
+    .catch((error) => {
+      errorHandler.genericInternalServerError(res)
+    })
 }
 
 export async function createPost(req: Request, res: Response) {
-  const {title, content, author} = req.body;
+  let post: Post = req.body
 
-  pool.query('INSERT INTO posts (title, content, author) VALUES ($1, $2, $3) RETURNING *', [title, content, author], (error, results) => {
-    if (error) {      
-      new ErrorHandler().internalServerError(res, {
-        status: false,
-        error: error
+  createPostInDB(post)
+    .then((results) => {
+      res.status(201).json({
+        status: true,
+        message: `Added post with ID: ${results.rows[0].id}`
       })
-      return
-    }
-
-    res.status(201).json({
-      status: true,
-      message: `Added post with ID: ${results.rows[0].id}`
     })
-  })
+    .catch((error) => {
+      errorHandler.genericInternalServerError(res)
+    })
 }
 
 export async function editPost(req: Request, res: Response) {
   const id = parseInt(req.params.id);
-  const { title, content, author } = req.body;
+  let post = req.body;
+  post.id = id
 
-  pool.query(
-    'UPDATE posts SET title = COALESCE($1, title), content = COALESCE($2, content), author = COALESCE($3, author) WHERE id = $4',
-    [title, content, author, id],
-    (error, results) => {
-      if (error) {      
-        new ErrorHandler().internalServerError(res, {
-          status: false,
-          error: error
-        });
-        return
-      }
+  editPostInDB(post)
+    .then((results) => {
       res.status(200).json({
         status: true,
         message: `Modified post with ID: ${id}`
       });
-    }
-  )
+    })
+    .catch((error) => {
+      errorHandler.genericInternalServerError(res)
+    })
 }
 
 export async function deletePost(req: Request, res: Response) {
   const id = parseInt(req.params.id);
-
-  pool.query(
-    'DELETE FROM posts WHERE id = $1',
-    [id],
-    (error, results) => {
-      if (error) {      
-        new ErrorHandler().internalServerError(res, {
-          status: false,
-          error: error
-        })
-        return
-      }
+  deletePostFromDB(id)
+    .then((results) => {
       res.status(200).json({
         status: true,
         message: `Deleted post with ID: ${id}`
       });
-    }
-  )
+    })
+    .catch((error) => {
+      errorHandler.genericInternalServerError(res)
+    })
 }

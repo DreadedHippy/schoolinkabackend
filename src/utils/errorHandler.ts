@@ -1,12 +1,20 @@
 import { Response } from "express";
-import { httpResponse } from "../models/response";
+import { httpResponse } from "../interface/response";
 
 export class ErrorHandler {
 	constructor(){}
 
-	// Something went wrong on the server
+	// Specify the server error
 	internalServerError(res: Response, data: httpResponse) {
 		res.status(500).json(data);
+	}
+
+	// Respond with a generic message: "Something went wrong on the server"
+	genericInternalServerError(res: Response) {
+		res.status(500).json({
+			status: false,
+			message: "Something went wrong on the server"
+		});
 	}
 
 	// Bad request passed to the server

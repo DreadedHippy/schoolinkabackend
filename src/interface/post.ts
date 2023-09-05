@@ -1,5 +1,5 @@
-export interface post {
-	id: number;
+export interface Post {
+	id?: number;
 	created_at?: Date;
 	title: string;
 	content: string;
