@@ -1,0 +1,35 @@
+{
+  "name": "schoolinkabackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/server.js",
+  "types": "lib/server.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.ts",
+    "prestart": "npm run build",
+    "start": "node lib/server.js",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "joi": "^17.10.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/morgan": "^1.9.5",
+    "@types/node": "^20.5.9",
+    "@types/pg": "^8.10.2",
+    "morgan": "^1.10.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
